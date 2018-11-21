@@ -1,0 +1,52 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+tasks.whenTaskAdded {
+    task -> if (task.name.contains('Test')) {
+        task.enabled = false
+    }
+}
+
+task hello << {
+
+    println 'hello world'
+}
+task hello2 << {
+    println 'hello world!'
+}
+
+task hello3 {
+    doLast {
+        println 'hello world!!'
+    }
+}
+
+hello.dependsOn hello2
+hello.dependsOn hello3
+hello2.mustRunAfter hello3
