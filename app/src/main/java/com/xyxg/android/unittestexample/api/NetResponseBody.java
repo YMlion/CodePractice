@@ -51,9 +51,9 @@ public class NetResponseBody extends ResponseBody {
             public long read(@NonNull Buffer sink, long byteCount) throws IOException {
                 long count = super.read(sink, byteCount);
                 byteRead += count;
-                if (mListener != null) {
-                    mListener.onProgress(contentLength(), byteRead, 100F * byteRead /
-                            contentLength());
+                long total = contentLength();
+                if (mListener != null && total > 0) {
+                    mListener.onProgress(total, byteRead, 100F * byteRead / total);
                 }
 
                 return count;

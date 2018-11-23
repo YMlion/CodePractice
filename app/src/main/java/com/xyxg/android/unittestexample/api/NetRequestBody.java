@@ -57,9 +57,9 @@ public class NetRequestBody extends RequestBody {
         public void write(@NonNull Buffer source, long byteCount) throws IOException {
             super.write(source, byteCount);
             byteWritten += byteCount;
-            if (mListener != null) {
-                mListener.onProgress(contentLength(), byteWritten, 100F * byteWritten /
-                        contentLength());
+            long total = contentLength();
+            if (mListener != null && total > 0) {
+                mListener.onProgress(total, byteWritten, 100F * byteWritten / total);
             }
         }
     }
