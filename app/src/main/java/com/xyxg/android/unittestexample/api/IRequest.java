@@ -15,9 +15,9 @@ import retrofit2.http.Query;
 public interface IRequest {
 
     @POST("books/upload")
-    Observable<Response<ResponseBody>> upload(@Body MultipartBody body);
+    Observable<String> upload(@Body MultipartBody body);
     @POST("books/upload2")
-    Observable<Response<ResponseBody>> upload2(@Body MultipartBody body);
+    Observable<String> upload2(@Body MultipartBody body);
 
     @GET("books/download")
     Observable<Response<ResponseBody>> download(@Query("fileName") String fileName);

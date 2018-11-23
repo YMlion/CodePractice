@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -19,7 +20,7 @@ public class DownloadTask {
     private static IRequest request;
     private static DownloadTask downloadTask;
 
-    private DownloadTask() {
+    private DownloadTask(NetInterceptor.ProgressListener listener) {
         if (request == null) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
@@ -27,6 +28,9 @@ public class DownloadTask {
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(60, TimeUnit.SECONDS)
                     .addInterceptor(interceptor)
+                    .addNetworkInterceptor(new NetInterceptor().addHeader("authentication",
+                            "authentication")
+                                                               .setListener(listener))
                     .build();
             request =
                     new Retrofit.Builder()
@@ -38,32 +42,28 @@ public class DownloadTask {
         }
     }
 
-    public static DownloadTask build() {
+    public static DownloadTask build(NetInterceptor.ProgressListener listener) {
         if (downloadTask == null) {
-            downloadTask = new DownloadTask();
+            downloadTask = new DownloadTask(listener);
         }
         return downloadTask;
     }
 
-    public void download(String fileName) {
-        request.download(fileName)
+    public Observable<File> download(String fileName, String path) {
+        return request.download(fileName)
                 .map(response -> {
-                    File file = new File("");
-                    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(""));
+                    File file = new File(path, fileName);
+                    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                     BufferedInputStream in = new BufferedInputStream(response.body().byteStream());
-                    byte[] bytes = new byte[in.available()];
-                    int s = 0;
-                    int size = 4096;
+                    byte[] bytes = new byte[4096];
                     int l;
-                    while ((l = in.read(bytes, s, size)) != -1) {
-                        out.write(bytes, s, size);
+                    while ((l = in.read(bytes)) != -1) {
+                        out.write(bytes, 0, l);
                         out.flush();
-                        s += l;
                     }
                     in.close();
                     out.close();
                     return file;
-                })
-                .subscribe();
+                });
     }
 }
