@@ -9,6 +9,7 @@ import android.view.View;
 import com.xyxg.android.unittestexample.api.DownloadTask;
 import com.xyxg.android.unittestexample.api.NetInterceptor;
 import com.xyxg.android.unittestexample.api.UploadTask;
+import com.xyxg.android.unittestexample.util.RxUtil;
 
 import java.io.File;
 
@@ -97,9 +98,8 @@ public class FileNetActivity extends AppCompatActivity {
         DownloadTask
                 .build((NetInterceptor.DownloadProgressListener) (total, writtenByte, progress) -> Log
                         .d(TAG, "onProgress: " + total + " : " + writtenByte + " : " + progress))
-                .download("chinamap_2063x1458.jpg", getExternalCacheDir().getAbsolutePath())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .download("thz.mp3", getExternalCacheDir().getAbsolutePath())
+                .compose(RxUtil.applySchedulerO())
                 .subscribe(new Observer<File>() {
                     @Override
                     public void onSubscribe(Disposable d) {

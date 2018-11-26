@@ -56,10 +56,17 @@ public class NetRequestBody extends RequestBody {
         @Override
         public void write(@NonNull Buffer source, long byteCount) throws IOException {
             super.write(source, byteCount);
+            if (byteCount <= 0) {
+                return;
+            }
             byteWritten += byteCount;
             long total = contentLength();
             if (mListener != null && total > 0 && byteWritten <= total) {
-                mListener.onProgress(total, byteWritten, 100F * byteWritten / total);
+                float p = 100F * byteWritten / total;
+                if (byteWritten == total) {
+                    p = 100;
+                }
+                mListener.onProgress(total, byteWritten, p);
             }
         }
     }

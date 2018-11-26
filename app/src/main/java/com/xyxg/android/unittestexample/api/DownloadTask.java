@@ -1,9 +1,8 @@
 package com.xyxg.android.unittestexample.api;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import com.xyxg.android.unittestexample.util.FileUtil;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -49,19 +48,9 @@ public class DownloadTask {
     }
 
     public Observable<File> download(String fileName, String path) {
-        return request.download(fileName).map(response -> {
-            File file = new File(path, fileName);
-            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-            BufferedInputStream in = new BufferedInputStream(response.body().byteStream());
-            byte[] bytes = new byte[4096];
-            int l;
-            while ((l = in.read(bytes)) != -1) {
-                out.write(bytes, 0, l);
-                out.flush();
-            }
-            in.close();
-            out.close();
-            return file;
-        });
+        return request
+                .download(fileName)
+                .map(response -> FileUtil.saveFile(response.body().byteStream(),
+                        path + File.separator + fileName));
     }
 }

@@ -50,10 +50,18 @@ public class NetResponseBody extends ResponseBody {
             @Override
             public long read(@NonNull Buffer sink, long byteCount) throws IOException {
                 long count = super.read(sink, byteCount);
+                if (count < 0) {
+                    return count;
+                }
                 byteRead += count;
                 long total = contentLength();
                 if (mListener != null && total > 0 && byteRead <= total) {
-                    mListener.onProgress(total, byteRead, 100F * byteRead / total);
+
+                    float p = 100F * byteRead / total;
+                    if (byteRead == total) {
+                        p = 100;
+                    }
+                    mListener.onProgress(total, byteRead, p);
                 }
 
                 return count;

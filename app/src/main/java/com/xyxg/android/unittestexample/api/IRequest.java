@@ -8,6 +8,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 
 /**
  * Created by YMlion on 2018/11/7.
@@ -20,6 +21,7 @@ public interface IRequest {
     @POST("books/upload2")
     Observable<String> upload2(@Body MultipartBody body);
 
+    @Streaming
     @GET("books/download")
     Observable<Response<ResponseBody>> download(@Query("fileName") String fileName);
 }
