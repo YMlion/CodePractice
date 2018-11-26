@@ -52,7 +52,7 @@ public class NetResponseBody extends ResponseBody {
                 long count = super.read(sink, byteCount);
                 byteRead += count;
                 long total = contentLength();
-                if (mListener != null && total > 0) {
+                if (mListener != null && total > 0 && byteRead <= total) {
                     mListener.onProgress(total, byteRead, 100F * byteRead / total);
                 }
 

@@ -22,7 +22,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Encrypt {
 
-    public static String encodeAES(String plaintext, String key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException {
+    public static String encodeAES(String plaintext, String key)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+            UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(128, new SecureRandom(key.getBytes()));
         SecretKey secretKey = keyGenerator.generateKey();

@@ -61,7 +61,6 @@ public class JarFileUtil {
     }
 
 
-
     public static void main(String[] args) {
         verifyPatchMetaSignature(new File("patch_signed_7zip.apk"));
     }

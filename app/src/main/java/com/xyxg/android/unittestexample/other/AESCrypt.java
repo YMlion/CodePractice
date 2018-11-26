@@ -30,7 +30,10 @@ public final class AESCrypt {
     private static final String HASH_ALGORITHM = "SHA-256";
 
     //AESCrypt-ObjC uses blank IV (not the best security, but the aim here is compatibility)
-    private static final byte[] ivBytes = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    private static final byte[] ivBytes = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00
+    };
 
     //togglable log option (please turn off in live!)
     public static boolean DEBUG_LOG_ENABLED = true;
@@ -42,7 +45,8 @@ public final class AESCrypt {
      * @param password used to generated key
      * @return SHA256 of the password
      */
-    private static SecretKeySpec generateKey(final String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    private static SecretKeySpec generateKey(final String password)
+            throws NoSuchAlgorithmException, UnsupportedEncodingException {
         final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
         byte[] bytes = password.getBytes("UTF-8");
         digest.update(bytes, 0, bytes.length);
@@ -152,8 +156,8 @@ public final class AESCrypt {
      * @return Decrypted message cipher text (not encoded)
      * @throws GeneralSecurityException if something goes wrong during encryption
      */
-    public static byte[] decrypt(final SecretKeySpec key, final byte[] iv, final byte[] decodedCipherText)
-            throws GeneralSecurityException {
+    public static byte[] decrypt(final SecretKeySpec key, final byte[] iv,
+            final byte[] decodedCipherText) throws GeneralSecurityException {
         final Cipher cipher = Cipher.getInstance(AES_MODE);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
         cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
@@ -180,8 +184,9 @@ public final class AESCrypt {
      * Converts byte array to hexidecimal useful for logging and fault finding
      */
     private static String bytesToHex(byte[] bytes) {
-        final char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
-                '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        final char[] hexArray = {
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+        };
         char[] hexChars = new char[bytes.length * 2];
         int v;
         for (int j = 0; j < bytes.length; j++) {

@@ -8,7 +8,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-import butterknife.ButterKnife;
+
 import com.xyxg.android.unittestexample.mail.MailInfo;
 import com.xyxg.android.unittestexample.mail.MailLogin;
 import com.xyxg.android.unittestexample.mail.MailOperate;
@@ -16,13 +16,9 @@ import com.xyxg.android.unittestexample.mail.User;
 import com.xyxg.android.unittestexample.other.AESCrypt;
 import com.xyxg.android.unittestexample.util.RxUtil;
 import com.xyxg.android.unittestexample.util.SubscriberWrap;
-import io.reactivex.Flowable;
-import io.reactivex.MaybeObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
+
+import org.reactivestreams.Subscription;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,21 +30,27 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscription;
+
+import butterknife.ButterKnife;
+import io.reactivex.Flowable;
+import io.reactivex.MaybeObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-    String[][] mailboxes = new String[][] {
-            new String[] { "qq.com", "498079564@qq.com", "Nq123456" },
-            new String[] { "163.com", "lm_yao@163.com", "123456abc" },
-            new String[] { "126.com", "xyxgylm@126.com", "123456abc" }
+    String[][] mailboxes = new String[][]{
+            new String[]{"qq.com", "498079564@qq.com", "Nq123456"},
+            new String[]{"163.com", "lm_yao@163.com", "123456abc"},
+            new String[]{"126.com", "xyxgylm@126.com", "123456abc"}
     };
 
     @Override
@@ -65,27 +67,27 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        String file = Environment.getExternalStorageDirectory()
-                                 .getAbsolutePath()
+        String file = Environment.getExternalStorageDirectory().getAbsolutePath()
                 + File.separator
                 + "Download"
                 + File.separator
                 + "ActivityManagerService.txt";
-        Flowable.generate(
-                () -> new BufferedReader(new InputStreamReader(new FileInputStream(file))),
-                (buffer, emitter) -> {
-                    try {
-                        String line;
-                        if ((line = buffer.readLine()) != null) {
-                            emitter.onNext(line);
-                        } else {
-                            emitter.onComplete();
-                        }
-                    } catch (Exception e) {
-                        emitter.onError(e);
-                    }
-                    return buffer;
-                }, BufferedReader::close)
+        Flowable
+                .generate(
+                        () -> new BufferedReader(new InputStreamReader(new FileInputStream(file))),
+                        (buffer, emitter) -> {
+                            try {
+                                String line;
+                                if ((line = buffer.readLine()) != null) {
+                                    emitter.onNext(line);
+                                } else {
+                                    emitter.onComplete();
+                                }
+                            } catch (Exception e) {
+                                emitter.onError(e);
+                            }
+                            return buffer;
+                        }, BufferedReader::close)
                 .ofType(String.class)
                 .compose(RxUtil.applySchedulerF())
                 .subscribe(new SubscriberWrap<String>() {
@@ -105,26 +107,23 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         List<String> strings = new ArrayList<>();
-        Flowable.just(strings)
-                .flatMap(Flowable::fromIterable)
-                .filter(s -> false).subscribe();
+        Flowable.just(strings).flatMap(Flowable::fromIterable).filter(s -> false).subscribe();
     }
 
     public void mailQQ(View view) {
-        AppContext.getContext()
-                  .setUser(new User(mailboxes[0][0], mailboxes[0][1], mailboxes[0][2]));
+        AppContext
+                .getContext()
+                .setUser(new User(mailboxes[0][0], mailboxes[0][1], mailboxes[0][2]));
         new Thread(() -> {
             try {
                 Folder[] folders =
                         MailOperate.getFolders(mailboxes[0][0], mailboxes[0][1], mailboxes[0][2],
-                                               true);
+                                true);
                 StringBuilder f = new StringBuilder();
                 for (Folder folder : folders) {
                     Log.e("TAG", "folder name : " + folder.getFullName());
-                    f.append(folder.getFullName())
-                     .append("\n");
-                    if (folder.getFullName()
-                              .equals("其他文件夹")) {
+                    f.append(folder.getFullName()).append("\n");
+                    if (folder.getFullName().equals("其他文件夹")) {
                         Folder[] folders1 = folder.list("*");
                         if (folders1 != null) {
                             for (Folder folder1 : folders1) {
@@ -134,10 +133,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                Transport transport =
-                        MailLogin.smtpConnect(mailboxes[0][0], mailboxes[0][1], mailboxes[0][2],
-                                              true)
-                                 .getTransport();
+                Transport transport = MailLogin
+                        .smtpConnect(mailboxes[0][0], mailboxes[0][1], mailboxes[0][2], true)
+                        .getTransport();
                 transport.connect();
                 if (transport.isConnected()) {
                     transport.close();
@@ -145,9 +143,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (MessagingException e) {
                 e.printStackTrace();
-                runOnUiThread(
-                        () -> Toast.makeText(MainActivity.this, "login failed", Toast.LENGTH_SHORT)
-                                   .show());
+                runOnUiThread(() -> Toast
+                        .makeText(MainActivity.this, "login failed", Toast.LENGTH_SHORT)
+                        .show());
             }
         }).start();
     }
@@ -157,17 +155,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginMailbox(String[] mailbox) {
-        AppContext.getContext()
-                  .setUser(new User(mailbox[0], mailbox[1], mailbox[2]));
-        Flowable.just(mailbox)
+        AppContext.getContext().setUser(new User(mailbox[0], mailbox[1], mailbox[2]));
+        Flowable
+                .just(mailbox)
                 .concatMap(strings -> Flowable.fromArray(
                         MailOperate.getFolders(strings[0], strings[1], strings[2], true)))
                 .map(Folder::getFullName)
                 .reduce((s, s2) -> s + "\n" + s2)
                 .doOnSuccess(s -> {
-                    Transport transport =
-                            MailLogin.smtpConnect(mailbox[0], mailbox[1], mailbox[2], true)
-                                     .getTransport();
+                    Transport transport = MailLogin
+                            .smtpConnect(mailbox[0], mailbox[1], mailbox[2], true)
+                            .getTransport();
                     transport.connect();
                     if (transport.isConnected()) {
                         transport.close();
@@ -188,8 +186,9 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, "login failed", Toast.LENGTH_SHORT)
-                             .show();
+                        Toast
+                                .makeText(MainActivity.this, "login failed", Toast.LENGTH_SHORT)
+                                .show();
                     }
 
                     @Override
@@ -222,8 +221,9 @@ public class MainActivity extends AppCompatActivity {
             Properties props = System.getProperties();
             Session mailSession = Session.getDefaultInstance(props, null);
             in = new BufferedInputStream(new FileInputStream(
-                    Environment.getExternalStorageDirectory()
-                               .getAbsolutePath() + File.separator + "data.eml"));
+                    Environment.getExternalStorageDirectory().getAbsolutePath()
+                            + File.separator
+                            + "data.eml"));
             MimeMessage mm = new MimeMessage(mailSession, in);
             Log.e("parseEml", "parseEml: " + MailInfo.getSubject(mm));
             Log.e("parseEml", "parseEml: " + MailInfo.getFrom(mm));

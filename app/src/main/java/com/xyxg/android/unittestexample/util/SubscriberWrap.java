@@ -1,14 +1,17 @@
 package com.xyxg.android.unittestexample.util;
 
 import android.util.Log;
-import io.reactivex.FlowableSubscriber;
+
 import org.reactivestreams.Subscription;
+
+import io.reactivex.FlowableSubscriber;
 
 /**
  * Created by YMlion on 2018/11/2.
  */
 public class SubscriberWrap<T> implements FlowableSubscriber<T> {
     private static final String TAG = "SubscriberWrap";
+
     @Override
     public void onSubscribe(Subscription s) {
         Log.d(TAG, "onSubscribe.");

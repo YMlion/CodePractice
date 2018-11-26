@@ -58,7 +58,7 @@ public class NetRequestBody extends RequestBody {
             super.write(source, byteCount);
             byteWritten += byteCount;
             long total = contentLength();
-            if (mListener != null && total > 0) {
+            if (mListener != null && total > 0 && byteWritten <= total) {
                 mListener.onProgress(total, byteWritten, 100F * byteWritten / total);
             }
         }

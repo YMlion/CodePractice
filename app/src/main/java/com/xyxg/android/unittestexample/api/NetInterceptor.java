@@ -24,10 +24,7 @@ public class NetInterceptor implements Interceptor {
         Request.Builder builder = null;
         if (mHeaders != null) {
             builder = request.newBuilder();
-            builder.headers(request.headers()
-                                   .newBuilder()
-                                   .addAll(mHeaders)
-                                   .build());
+            builder.headers(request.headers().newBuilder().addAll(mHeaders).build());
         }
 
         if (mListener instanceof UploadProgressListener) {
@@ -38,10 +35,10 @@ public class NetInterceptor implements Interceptor {
         }
         Response response = chain.proceed(builder == null ? request : builder.build());
         if (mListener instanceof DownloadProgressListener) {
-            response = response.newBuilder()
-                               .body(new NetResponseBody(response.body(), mListener)
-                               )
-                               .build();
+            response = response
+                    .newBuilder()
+                    .body(new NetResponseBody(response.body(), mListener))
+                    .build();
         }
         return response;
     }
@@ -63,8 +60,7 @@ public class NetInterceptor implements Interceptor {
         if (mHeaders != null) {
             builder = mHeaders.newBuilder();
         }
-        mHeaders = builder.add(key, value)
-                          .build();
+        mHeaders = builder.add(key, value).build();
         return this;
     }
 

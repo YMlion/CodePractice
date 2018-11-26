@@ -1,6 +1,7 @@
 package com.xyxg.android.unittestexample.util;
 
 import android.util.Log;
+
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 

@@ -13,7 +13,8 @@ public class TaskExecutor {
 
     public static TaskExecutor build() {
         if (INSTANCE == null) {
-            mExecutor = new ThreadPoolExecutor(10, 15, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(10));
+            mExecutor = new ThreadPoolExecutor(10, 15, 1, TimeUnit.SECONDS,
+                    new LinkedBlockingDeque<Runnable>(10));
             INSTANCE = new TaskExecutor();
         }
 
@@ -36,7 +37,9 @@ public class TaskExecutor {
                 public void run() {
                     synchronized (INSTANCE) {
                         num++;
-                        System.out.println(System.currentTimeMillis() + " : " + Thread.currentThread().toString() + num);
+                        System.out.println(System.currentTimeMillis() + " : " + Thread
+                                .currentThread()
+                                .toString() + num);
                     }
                     try {
                         Thread.sleep(2000 + num);

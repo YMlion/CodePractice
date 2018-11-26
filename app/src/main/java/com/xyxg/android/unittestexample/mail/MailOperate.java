@@ -21,10 +21,12 @@ import javax.mail.Store;
 
 public class MailOperate {
 
-    public static Folder[] getFolders(String host, String username, String pwd, boolean isSSL) throws MessagingException {
+    public static Folder[] getFolders(String host, String username, String pwd, boolean isSSL)
+            throws MessagingException {
         Store store = MailLogin.imapConnect(host, username, pwd, isSSL);
         if (host.endsWith("gmail.com")) {
-            store.connect("imap.gmail.com", username, "ya29.GltjBA-nw7BUTDxed8Ivld9RqGDhZD15KkeM5neDbg4NzSt_pv8y5QJYHLJGsT-UyOp4rtSbtoFIkfXa8ksvWLzEH6o1d7kM1fmhqkvwJ7MOOwnlcgY9VHDbPld3");
+            store.connect("imap.gmail.com", username,
+                    "ya29.GltjBA-nw7BUTDxed8Ivld9RqGDhZD15KkeM5neDbg4NzSt_pv8y5QJYHLJGsT-UyOp4rtSbtoFIkfXa8ksvWLzEH6o1d7kM1fmhqkvwJ7MOOwnlcgY9VHDbPld3");
         } else {
             store.connect();
         }
@@ -41,7 +43,8 @@ public class MailOperate {
         return list.toArray(new Folder[list.size()]);
     }
 
-    public static Message[] getFolderMails(String host, String username, String pwd, boolean isSSL, String folderName) throws MessagingException {
+    public static Message[] getFolderMails(String host, String username, String pwd, boolean isSSL,
+            String folderName) throws MessagingException {
         Store store = MailLogin.imapConnect(host, username, pwd, isSSL);
         store.connect();
         Folder folder = store.getFolder(folderName);
@@ -61,8 +64,8 @@ public class MailOperate {
      * @param messageIds 邮件的UIDs
      * @param isRead     标记为已读/未读
      */
-    public static void markRead(String host, String username,
-                                String pwd, boolean isSSL, String folderName, long[] messageIds, boolean isRead) throws MessagingException {
+    public static void markRead(String host, String username, String pwd, boolean isSSL,
+            String folderName, long[] messageIds, boolean isRead) throws MessagingException {
         Store store = MailLogin.imapConnect(host, username, pwd, isSSL);
         store.connect();
 
@@ -74,8 +77,8 @@ public class MailOperate {
         store.close();
     }
 
-    public static void markFlag(String host, String username,
-                                String pwd, boolean isSSL, String folderName, long[] messageIds, boolean isFlagged) throws MessagingException {
+    public static void markFlag(String host, String username, String pwd, boolean isSSL,
+            String folderName, long[] messageIds, boolean isFlagged) throws MessagingException {
         Store store = MailLogin.imapConnect(host, username, pwd, isSSL);
         store.connect();
 
@@ -87,8 +90,8 @@ public class MailOperate {
         store.close();
     }
 
-    public static void move(String host, String username,
-                            String pwd, boolean isSSL, String source, String des, long[] messageIds) throws MessagingException {
+    public static void move(String host, String username, String pwd, boolean isSSL, String source,
+            String des, long[] messageIds) throws MessagingException {
         Store store = MailLogin.imapConnect(host, username, pwd, isSSL);
         store.connect();
 
@@ -104,8 +107,8 @@ public class MailOperate {
         store.close();
     }
 
-    public static void delete(String host, String username,
-                              String pwd, boolean isSSL, String source, long[] messageIds) throws MessagingException {
+    public static void delete(String host, String username, String pwd, boolean isSSL,
+            String source, long[] messageIds) throws MessagingException {
         Store store = MailLogin.imapConnect(host, username, pwd, isSSL);
         store.connect();
 

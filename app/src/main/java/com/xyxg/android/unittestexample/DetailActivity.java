@@ -70,13 +70,15 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         folderTv.setText(intent.getStringExtra("f"));
         getMails();
-//        parseEml();
+        //        parseEml();
     }
 
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
         new Thread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 SystemClock.sleep(5000);
                 if (Build.VERSION.SDK_INT > 20) {
                     JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
@@ -88,7 +90,8 @@ public class DetailActivity extends AppCompatActivity {
                     scheduler.schedule(job);
                 }
                 runOnUiThread(new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
 
                     }
                 });
@@ -96,7 +99,8 @@ public class DetailActivity extends AppCompatActivity {
         }).start();
     }
 
-    @Override protected void onStop() {
+    @Override
+    protected void onStop() {
         super.onStop();
         if (Build.VERSION.SDK_INT > 20) {
             JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
@@ -109,10 +113,14 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    InputStream in = new BufferedInputStream(new FileInputStream(Environment.getExternalStorageDirectory() + File.separator + "attachimage.eml"));
+                    InputStream in = new BufferedInputStream(new FileInputStream(
+                            Environment.getExternalStorageDirectory()
+                                    + File.separator
+                                    + "attachimage.eml"));
                     MimeMessage message = new MimeMessage(null, in);
                     final StringBuilder mail = new StringBuilder();
-                    mail.append(MailInfo.getSubject(message))
+                    mail
+                            .append(MailInfo.getSubject(message))
                             .append("\n")
                             .append(MailInfo.getFrom(message))
                             .append("\n")
@@ -136,17 +144,22 @@ public class DetailActivity extends AppCompatActivity {
             public void run() {
                 User user = AppContext.getContext().getUser();
                 try {
-                    IMAPStore store = (IMAPStore) MailLogin.imapConnect(user.getHost(), user.getAccount(), user.getPwd(), !user.getHost().equals("2980.com"));
+                    IMAPStore store =
+                            (IMAPStore) MailLogin.imapConnect(user.getHost(), user.getAccount(),
+                                    user.getPwd(), !user.getHost().equals("2980.com"));
                     store.addConnectionListener(new ConnectionListener() {
-                        @Override public void opened(ConnectionEvent e) {
+                        @Override
+                        public void opened(ConnectionEvent e) {
                             Log.e(TAG, "store opened.");
                         }
 
-                        @Override public void disconnected(ConnectionEvent e) {
+                        @Override
+                        public void disconnected(ConnectionEvent e) {
                             Log.e(TAG, "store disconnected.");
                         }
 
-                        @Override public void closed(ConnectionEvent e) {
+                        @Override
+                        public void closed(ConnectionEvent e) {
                             Log.e(TAG, "store closed.");
                         }
                     });
@@ -164,12 +177,14 @@ public class DetailActivity extends AppCompatActivity {
 
                     final IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
                     folder.addConnectionListener(new ConnectionAdapter() {
-                        @Override public void closed(ConnectionEvent e) {
+                        @Override
+                        public void closed(ConnectionEvent e) {
                             super.closed(e);
                             Log.d(TAG, "fold closed.");
                         }
 
-                        @Override public void opened(ConnectionEvent e) {
+                        @Override
+                        public void opened(ConnectionEvent e) {
                             super.opened(e);
                             Log.d(TAG, "fold opened.");
                         }
@@ -181,7 +196,7 @@ public class DetailActivity extends AppCompatActivity {
                         count = 2;
                     }
                     Message[] messages = folder.getMessages(1, count);
-//                    Message[] messages = new Message[1];
+                    //                    Message[] messages = new Message[1];
                     //messages[0] = folder.getMessageByUID(1480657571);
                     //messages[0] = folder.getMessageByUID(1343717111);
                     //messages[0] = folder.getMessageByUID(1615);
@@ -205,19 +220,23 @@ public class DetailActivity extends AppCompatActivity {
                         boolean hasAttach = MailInfo.isContainAttachment(imapMessage);
                         end = System.currentTimeMillis();
                         Log.e("TAG", "parse attach : " + (end - start));
-                        mail.append(MailInfo.getSubject(imapMessage))
+                        mail
+                                .append(MailInfo.getSubject(imapMessage))
                                 .append("\n")
                                 .append(MailInfo.getFrom(imapMessage))
                                 .append("\n")
-                                .append(MailInfo.getReceiveAddress(imapMessage, Message.RecipientType.TO))
+                                .append(MailInfo.getReceiveAddress(imapMessage,
+                                        Message.RecipientType.TO))
                                 .append("\n")
                                 .append(uid)
                                 .append("\n")
-                                .append(MailInfo.isRead(imapMessage) ? "已读" : "未读"/*content.toString()*/)
+                                .append(MailInfo.isRead(imapMessage) ? "已读" :
+                                        "未读"/*content.toString()*/)
                                 .append("\n")
-                                .append(MailInfo.isStar(imapMessage) ? "星标" : "普通"/*content.toString()*/)
-//                                .append("\n")
-//                                .append(content.toString())
+                                .append(MailInfo.isStar(imapMessage) ? "星标" :
+                                        "普通"/*content.toString()*/)
+                                //                                .append("\n")
+                                //                                .append(content.toString())
                                 .append("\n")
                                 .append(hasAttach)
                                 .append("\n")
@@ -255,8 +274,7 @@ public class DetailActivity extends AppCompatActivity {
                 super.messagesAdded(e);
                 Message[] messages = e.getMessages();
                 try {
-                    Log.e(TAG, "messagesAdded: " + MailInfo.getSubject(
-                            (MimeMessage) messages[0]));
+                    Log.e(TAG, "messagesAdded: " + MailInfo.getSubject((MimeMessage) messages[0]));
                     Folder f = (Folder) e.getSource();
                     if (f.isOpen()) {
                         f.close();

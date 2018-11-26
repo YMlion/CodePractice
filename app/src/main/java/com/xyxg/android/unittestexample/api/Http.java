@@ -13,18 +13,18 @@ import retrofit2.HttpException;
 public class Http {
 
     public static <T> ObservableTransformer<T, T> handleResult() {
-        return upstream -> upstream.subscribeOn(Schedulers.io())
-                                   .observeOn(AndroidSchedulers.mainThread())
-                                   .onErrorResumeNext(throwable -> {
-                                       if (throwable instanceof HttpException) {
-                                           ResponseBody body = ((HttpException) throwable).response()
-                                                                                          .errorBody();
-                                           if (body != null) {
-                                               return Observable.error(new HttpThrowable(throwable
-                                                       .getMessage() + " " + body.string()));
-                                           }
-                                       }
-                                       return Observable.error(throwable);
-                                   });
+        return upstream -> upstream
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorResumeNext(throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody body = ((HttpException) throwable).response().errorBody();
+                        if (body != null) {
+                            return Observable.error(new HttpThrowable(
+                                    throwable.getMessage() + " " + body.string()));
+                        }
+                    }
+                    return Observable.error(throwable);
+                });
     }
 }

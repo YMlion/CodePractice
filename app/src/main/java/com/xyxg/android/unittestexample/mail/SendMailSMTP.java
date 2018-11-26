@@ -39,7 +39,8 @@ public class SendMailSMTP {
     /**
      * 发送简单的文本邮件
      */
-    public static void sendTextEmail(String host, String username, String pwd, boolean isSSL) throws Exception {
+    public static void sendTextEmail(String host, String username, String pwd, boolean isSSL)
+            throws Exception {
         // 创建MimeMessage实例对象
         Session session = MailLogin.smtpConnect(host, username, pwd, isSSL);
         MimeMessage message = new MimeMessage(session);
@@ -69,7 +70,8 @@ public class SendMailSMTP {
     /**
      * 发送简单的html邮件
      */
-    public static void sendHtmlEmail(String host, String username, String pwd, boolean isSSL) throws Exception {
+    public static void sendHtmlEmail(String host, String username, String pwd, boolean isSSL)
+            throws Exception {
         // 创建MimeMessage实例对象
         MimeMessage message = new MimeMessage(MailLogin.smtpConnect(host, username, pwd, isSSL));
         // 设置邮件主题
@@ -93,7 +95,8 @@ public class SendMailSMTP {
     /**
      * 发送带内嵌图片的HTML邮件
      */
-    public static void sendHtmlWithInnerImageEmail(String host, String username, String pwd, boolean isSSL) throws MessagingException {
+    public static void sendHtmlWithInnerImageEmail(String host, String username, String pwd,
+            boolean isSSL) throws MessagingException {
         // 创建邮件内容
         MimeMessage message = new MimeMessage(MailLogin.smtpConnect(host, username, pwd, isSSL));
         // 邮件主题,并指定编码格式
@@ -132,7 +135,9 @@ public class SendMailSMTP {
         // 创建一个表示html正文的MimeBodyPart对象
         MimeBodyPart htmlBodypart = new MimeBodyPart();
         // 其中cid=androidlogo.gif是引用邮件内部的图片，即imagePart.setContentID("androidlogo.gif");方法所保存的图片
-        htmlBodypart.setContent("<span style='color:red;'>这是带内嵌图片的HTML邮件哦！！！<img src=\"cid:firefoxlogo.png\" /></span>", "text/html;charset=utf-8");
+        htmlBodypart.setContent(
+                "<span style='color:red;'>这是带内嵌图片的HTML邮件哦！！！<img src=\"cid:firefoxlogo.png\" /></span>",
+                "text/html;charset=utf-8");
         htmlMultipart.addBodyPart(htmlBodypart);
         htmlPart.setContent(htmlMultipart);
 
@@ -146,7 +151,8 @@ public class SendMailSMTP {
     /**
      * 发送带内嵌图片、附件、多收件人(显示邮箱姓名)、邮件优先级、阅读回执的完整的HTML邮件
      */
-    public static void sendMultipleEmail(String host, String username, String pwd, boolean isSSL) throws Exception {
+    public static void sendMultipleEmail(String host, String username, String pwd, boolean isSSL)
+            throws Exception {
         String charset = "utf-8";   // 指定中文编码格式
         // 创建MimeMessage实例对象
         Session session = MailLogin.smtpConnect(host, username, pwd, isSSL);
@@ -156,24 +162,22 @@ public class SendMailSMTP {
         // 设置发送人
         message.setFrom(new InternetAddress(username, "测试邮箱", charset));
         // 设置收件人
-        message.setRecipients(Message.RecipientType.TO,
-                new Address[]{
-                        // 参数1：邮箱地址，参数2：姓名（在客户端收件只显示姓名，而不显示邮件地址），参数3：姓名中文字符串编码
-                        new InternetAddress("xyxgylm@126.com", "126", charset)
-                }
-        );
+        message.setRecipients(Message.RecipientType.TO, new Address[]{
+                // 参数1：邮箱地址，参数2：姓名（在客户端收件只显示姓名，而不显示邮件地址），参数3：姓名中文字符串编码
+                new InternetAddress("xyxgylm@126.com", "126", charset)
+        });
         // 设置抄送
-//        message.setRecipient(Message.RecipientType.CC, new InternetAddress("xyang0917@gmail.com", "王五_gmail", charset));
+        //        message.setRecipient(Message.RecipientType.CC, new InternetAddress("xyang0917@gmail.com", "王五_gmail", charset));
         // 设置密送
-//        message.setRecipient(Message.RecipientType.BCC, new InternetAddress("xyang0917@qq.com", "赵六_QQ", charset));
+        //        message.setRecipient(Message.RecipientType.BCC, new InternetAddress("xyang0917@qq.com", "赵六_QQ", charset));
         // 设置发送时间
         message.setSentDate(new Date());
         // 设置回复人(收件人回复此邮件时,默认收件人)
-//        message.setReplyTo(InternetAddress.parse("\"" + MimeUtility.encodeText("田七") + "\" <417067629@qq.com>"));
+        //        message.setReplyTo(InternetAddress.parse("\"" + MimeUtility.encodeText("田七") + "\" <417067629@qq.com>"));
         // 设置优先级(1:紧急   3:普通    5:低)
-//        message.setHeader("X-Priority", "1");
+        //        message.setHeader("X-Priority", "1");
         // 要求阅读回执(收件人阅读邮件时会提示回复发件人,表明邮件已收到,并已阅读)
-//        message.setHeader("Disposition-Notification-To", username);
+        //        message.setHeader("Disposition-Notification-To", username);
 
         // 创建一个MIME子类型为"mixed"的MimeMultipart对象，表示这是一封混合组合类型的邮件
         MimeMultipart mailContent = new MimeMultipart("mixed");
@@ -181,16 +185,20 @@ public class SendMailSMTP {
 
         // 附件
         MimeBodyPart attach1 = new MimeBodyPart();
-//        MimeBodyPart attach2 = new MimeBodyPart();
+        //        MimeBodyPart attach2 = new MimeBodyPart();
         // 内容
         MimeBodyPart mailBody = new MimeBodyPart();
 
         // 将附件和内容添加到邮件当中
         mailContent.addBodyPart(attach1);
-//        mailContent.addBodyPart(attach2);
+        //        mailContent.addBodyPart(attach2);
         mailContent.addBodyPart(mailBody);
 
-        String attachPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Download" + File.separator + "2980.apk";
+        String attachPath = Environment.getExternalStorageDirectory().getAbsolutePath()
+                + File.separator
+                + "Download"
+                + File.separator
+                + "2980.apk";
         File af = new File(attachPath);
         totalSize = (long) (af.length() * 1.37f);
 
@@ -210,9 +218,9 @@ public class SendMailSMTP {
         mailBody.setContent(body);
 
         // 邮件正文由html和图片构成
-//        MimeBodyPart imgPart = new MimeBodyPart();
+        //        MimeBodyPart imgPart = new MimeBodyPart();
         MimeBodyPart htmlPart = new MimeBodyPart();
-//        body.addBodyPart(imgPart);
+        //        body.addBodyPart(imgPart);
         body.addBodyPart(htmlPart);
 
         // 正文图片
@@ -225,11 +233,9 @@ public class SendMailSMTP {
         MimeMultipart htmlMultipart = new MimeMultipart("alternative");
         htmlPart.setContent(htmlMultipart);
         MimeBodyPart htmlContent = new MimeBodyPart();
-        String html = "<span style='color:red'>这是我自己用java mail发送的邮件哦！" +
-                "<img src='cid:firefoxlogo.png' /></span>";
-        htmlContent.setContent(
-                html
-                , "text/html;charset=gbk");
+        String html = "<span style='color:red'>这是我自己用java mail发送的邮件哦！"
+                + "<img src='cid:firefoxlogo.png' /></span>";
+        htmlContent.setContent(html, "text/html;charset=gbk");
         htmlMultipart.addBodyPart(htmlContent);
 
         // 保存邮件内容修改
@@ -241,12 +247,14 @@ public class SendMailSMTP {
         // 发送邮件
         Transport transport = session.getTransport();
         transport.connect();
-        transport.sendMessage(message, message.getAllRecipients(), new SMTPOutputStream.WritingListener() {
-            @Override
-            public void onWriting(long writtenBytes) {
-                Log.e("SMTPOutputStream", "onWriting: " + (writtenBytes / 1.0f / totalSize * 100));
-            }
-        });
+        transport.sendMessage(message, message.getAllRecipients(),
+                new SMTPOutputStream.WritingListener() {
+                    @Override
+                    public void onWriting(long writtenBytes) {
+                        Log.e("SMTPOutputStream",
+                                "onWriting: " + (writtenBytes / 1.0f / totalSize * 100));
+                    }
+                });
     }
 
     /**
@@ -254,7 +262,8 @@ public class SendMailSMTP {
      *
      * @param message 邮件内容
      */
-    public static File buildEmlFile(Message message) throws MessagingException, FileNotFoundException, IOException {
+    public static File buildEmlFile(Message message)
+            throws MessagingException, FileNotFoundException, IOException {
         File file = new File("c:\\" + MimeUtility.decodeText(message.getSubject()) + ".eml");
         message.writeTo(new FileOutputStream(file));
         return file;
@@ -263,10 +272,12 @@ public class SendMailSMTP {
     /**
      * 发送本地已经生成好的email文件
      */
-    public static void sendMailForEml(File eml, String host, String username, String pwd, boolean isSSL) throws Exception {
+    public static void sendMailForEml(File eml, String host, String username, String pwd,
+            boolean isSSL) throws Exception {
         // 获得邮件内容,即发生前生成的eml文件
         InputStream is = new FileInputStream(eml);
-        MimeMessage message = new MimeMessage(MailLogin.smtpConnect(host, username, pwd, isSSL), is);
+        MimeMessage message =
+                new MimeMessage(MailLogin.smtpConnect(host, username, pwd, isSSL), is);
         //发送邮件
         Transport.send(message);
     }

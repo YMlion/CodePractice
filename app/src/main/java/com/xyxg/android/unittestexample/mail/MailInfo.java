@@ -1,11 +1,8 @@
 package com.xyxg.android.unittestexample.mail;
 
-import android.util.Base64;
 import android.util.Log;
 
-import com.sun.mail.imap.IMAPBodyPart;
 import com.sun.mail.util.BASE64DecoderStream;
-import com.sun.mail.util.MimeUtil;
 import com.sun.mail.util.QPDecoderStream;
 
 import java.io.BufferedInputStream;
@@ -13,22 +10,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
-import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -45,7 +38,8 @@ import static android.content.ContentValues.TAG;
 public class MailInfo {
 
 
-    public static String getSubject(MimeMessage msg) throws MessagingException, UnsupportedEncodingException {
+    public static String getSubject(MimeMessage msg)
+            throws MessagingException, UnsupportedEncodingException {
         return MimeUtility.decodeText(msg.getSubject());
     }
 
@@ -55,7 +49,8 @@ public class MailInfo {
      * @param msg 邮件内容
      * @return 姓名 <Email地址>
      */
-    public static String getFrom(MimeMessage msg) throws MessagingException, UnsupportedEncodingException {
+    public static String getFrom(MimeMessage msg)
+            throws MessagingException, UnsupportedEncodingException {
         String from = "";
         Address[] froms = msg.getFrom();
         if (froms.length < 1)
@@ -83,7 +78,8 @@ public class MailInfo {
      * @param type 收件人类型
      * @return 收件人1 <邮件地址1>, 收件人2 <邮件地址2>, ...
      */
-    public static String getReceiveAddress(MimeMessage msg, Message.RecipientType type) throws MessagingException {
+    public static String getReceiveAddress(MimeMessage msg, Message.RecipientType type)
+            throws MessagingException {
         StringBuffer receiveAddress = new StringBuffer();
         Address[] addresss = null;
         if (type == null) {
@@ -96,7 +92,11 @@ public class MailInfo {
             return "";
         for (Address address : addresss) {
             InternetAddress internetAddress = (InternetAddress) address;
-            receiveAddress.append(internetAddress.getPersonal()).append(':').append(internetAddress.getAddress()).append(",");
+            receiveAddress
+                    .append(internetAddress.getPersonal())
+                    .append(':')
+                    .append(internetAddress.getAddress())
+                    .append(",");
         }
 
         receiveAddress.deleteCharAt(receiveAddress.length() - 1); //删除最后一个逗号
@@ -110,7 +110,8 @@ public class MailInfo {
      * @param part    邮件体
      * @param content 存储邮件文本内容的字符串
      */
-    public static void getMailTextContent(Part part, StringBuilder content) throws MessagingException, IOException {
+    public static void getMailTextContent(Part part, StringBuilder content)
+            throws MessagingException, IOException {
         //如果是文本类型的附件，通过getContent方法可以取到文本内容，但这不是我们需要的结果，所以在这里要做判断
         Log.e(TAG, "getMailTextContent: 1");
         boolean isContainTextAttach = part.getContentType().indexOf("name") > 0;
@@ -123,7 +124,8 @@ public class MailInfo {
                 Log.e(TAG, "getMailTextContent: 5");
                 content.append((String) partContent);
                 Log.e(TAG, "getMailTextContent: 6");
-            } else if (partContent instanceof QPDecoderStream || partContent instanceof BASE64DecoderStream) {
+            } else if (partContent instanceof QPDecoderStream
+                    || partContent instanceof BASE64DecoderStream) {
                 BufferedInputStream bis = new BufferedInputStream((InputStream) partContent);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 while (true) {
@@ -157,7 +159,8 @@ public class MailInfo {
                     getMailTextContent(bodyPart, content);
                 }
             } else if (partContent instanceof InputStream) {
-                Multipart multipart = new MimeMultipart(new ByteArrayDataSource((InputStream) partContent, "multipart/*"));
+                Multipart multipart = new MimeMultipart(
+                        new ByteArrayDataSource((InputStream) partContent, "multipart/*"));
                 int partCount = multipart.getCount();
                 for (int i = 0; i < partCount; i++) {
                     BodyPart bodyPart = multipart.getBodyPart(i);
@@ -230,7 +233,8 @@ public class MailInfo {
             for (int i = 0; i < partCount; i++) {
                 BodyPart bodyPart = multipart.getBodyPart(i);
                 String disp = bodyPart.getDisposition();
-                if (disp != null && (disp.equalsIgnoreCase(Part.ATTACHMENT) || disp.equalsIgnoreCase(Part.INLINE))) {
+                if (disp != null && (disp.equalsIgnoreCase(Part.ATTACHMENT)
+                        || disp.equalsIgnoreCase(Part.INLINE))) {
                     String fileName = bodyPart.getFileName();
                     Log.e(TAG, "Mail parse : " + fileName + "; " + getEncoding(fileName));
                     checkLines(bodyPart);

@@ -38,11 +38,12 @@ public class RoundImageView extends ImageView {
         Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas1 = new Canvas(bitmap);
         super.onDraw(canvas1);
-        BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        BitmapShader shader =
+                new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
         mPaint.setShader(shader);
         Rect rect = new Rect();
         getDrawingRect(rect);
-//        RectF rectF = new RectF(getLeft() - getPaddingLeft(), getTop() - getPaddingTop(), getRight() - getPaddingRight(), getBottom() - getPaddingBottom());
+        //        RectF rectF = new RectF(getLeft() - getPaddingLeft(), getTop() - getPaddingTop(), getRight() - getPaddingRight(), getBottom() - getPaddingBottom());
         RectF rectF = new RectF(rect);
         canvas.drawRoundRect(rectF, 100, 100, mPaint);
     }

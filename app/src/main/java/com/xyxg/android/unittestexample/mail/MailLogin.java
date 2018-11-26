@@ -1,11 +1,7 @@
 package com.xyxg.android.unittestexample.mail;
 
-import android.util.Log;
 import com.sun.mail.util.MailSSLSocketFactory;
 
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
 
@@ -15,8 +11,6 @@ import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 /**
  * @author Yao Limin
@@ -27,23 +21,25 @@ public class MailLogin {
 
     private static final String SSL_FACTORY = "com.sun.mail.util.MailSSLSocketFactory";
 
-    public static Store imapConnect(String host, String username, String pwd, boolean isSSL) throws MessagingException {
+    public static Store imapConnect(String host, String username, String pwd, boolean isSSL)
+            throws MessagingException {
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
         mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
         mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-        mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+        mc.addMailcap(
+                "message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
         CommandMap.setDefaultCommandMap(mc);
         Properties props = new Properties();
-//        username = "testtx@henhaoji.com";
-//        pwd = "33280484";
+        //        username = "testtx@henhaoji.com";
+        //        pwd = "33280484";
         if (isSSL) {
             props.put("mail.imaps.starttls.enable", true);
-//        props.put("mail.imaps.starttls.required", true);
+            //        props.put("mail.imaps.starttls.required", true);
             props.put("mail.imaps.auth", true);
             props.put("mail.imaps.port", "993");
-//        props.put("mail.imaps.socketFactory.port", "993");
+            //        props.put("mail.imaps.socketFactory.port", "993");
             props.put("mail.store.protocol", "imaps");
             if (host.equals("outlook.com")) {
                 props.put("mail.imaps.host", "imap-mail." + host);
@@ -71,13 +67,15 @@ public class MailLogin {
         return session.getStore();
     }
 
-    public static Store pop3Connect(String host, String username, String pwd, boolean isSSL) throws NoSuchProviderException {
+    public static Store pop3Connect(String host, String username, String pwd, boolean isSSL)
+            throws NoSuchProviderException {
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
         mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
         mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-        mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+        mc.addMailcap(
+                "message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
         CommandMap.setDefaultCommandMap(mc);
         Properties props = new Properties();
         if (isSSL) {
@@ -120,8 +118,8 @@ public class MailLogin {
         mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
         CommandMap.setDefaultCommandMap(mc);*/
         Properties props = new Properties();
-//        username = "testtx@henhaoji.com";
-//        pwd = "33280484";
+        //        username = "testtx@henhaoji.com";
+        //        pwd = "33280484";
         boolean isOut = false;
         if (host.equals("outlook.com")) {
             isOut = true;

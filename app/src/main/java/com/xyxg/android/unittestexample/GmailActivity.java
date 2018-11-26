@@ -27,8 +27,9 @@ public class GmailActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.web);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-                "(KHTML, like Gecko) Chrome/59.0.3071.82");
+        webSettings.setUserAgentString(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                        + "(KHTML, like Gecko) Chrome/59.0.3071.82");
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -66,10 +67,10 @@ public class GmailActivity extends AppCompatActivity {
                 return super.shouldOverrideUrlLoading(view, url);
             }
         });
-        String url = "https://accounts.google.com/o/oauth2/v2/auth?" +
-                "scope=openid%20email%20profile%20https://mail.google.com/%20https://www.googleapis.com/auth/contacts&" +
-                "redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&" +
-                "client_id=1078214547638-rmtl4r2p05ojhs4v328khm143ilg5fag.apps.googleusercontent.com";
+        String url = "https://accounts.google.com/o/oauth2/v2/auth?"
+                + "scope=openid%20email%20profile%20https://mail.google.com/%20https://www.googleapis.com/auth/contacts&"
+                + "redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&"
+                + "client_id=1078214547638-rmtl4r2p05ojhs4v328khm143ilg5fag.apps.googleusercontent.com";
         webView.loadUrl(url);
     }
 

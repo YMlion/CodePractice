@@ -29,18 +29,17 @@ public class UploadTask {
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(60, TimeUnit.SECONDS)
                     .addInterceptor(interceptor)
-                    .addNetworkInterceptor(new NetInterceptor().addHeader("authentication",
-                            "authentication")
-                                                               .setListener(listener))
+                    .addNetworkInterceptor(new NetInterceptor()
+                            .addHeader("authentication", "authentication")
+                            .setListener(listener))
                     .build();
-            request =
-                    new Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .client(client)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                            .build()
-                            .create(IRequest.class);
+            request = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build()
+                    .create(IRequest.class);
         }
     }
 
@@ -54,19 +53,17 @@ public class UploadTask {
     public Observable<String> upload(String path) {
         File file = new File(path);
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-        builder.addPart(MultipartBody.Part.createFormData("file", file.getName(), RequestBody
-                .create(MediaType.parse("multipart/form-data"), file)));
-        return request.upload(builder.build())
-                      .compose(Http.handleResult());
+        builder.addPart(MultipartBody.Part.createFormData("file", file.getName(),
+                RequestBody.create(MediaType.parse("multipart/form-data"), file)));
+        return request.upload(builder.build()).compose(Http.handleResult());
     }
 
     public Observable<String> upload2(String type, String path) {
         File file = new File(path);
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         builder.addFormDataPart("type", type);
-        builder.addPart(MultipartBody.Part.createFormData("file", file.getName(), RequestBody
-                .create(MediaType.parse("multipart/form-data"), file)));
-        return request.upload2(builder.build())
-                      .compose(Http.handleResult());
+        builder.addPart(MultipartBody.Part.createFormData("file", file.getName(),
+                RequestBody.create(MediaType.parse("multipart/form-data"), file)));
+        return request.upload2(builder.build()).compose(Http.handleResult());
     }
 }

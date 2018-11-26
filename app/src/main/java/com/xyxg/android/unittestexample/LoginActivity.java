@@ -52,14 +52,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Folder[] folders = null;
                 boolean isSSL = true;
                 try {
-                    folders = MailOperate.getFolders(name.substring(name.indexOf('@') + 1), name, pwd, isSSL);
+                    folders =
+                            MailOperate.getFolders(name.substring(name.indexOf('@') + 1), name, pwd,
+                                    isSSL);
                 } catch (Exception e) {
                     e.printStackTrace();
                     isSSL = false;
                 }
                 try {
                     if (!isSSL) {
-                        folders = MailOperate.getFolders(name.substring(name.indexOf('@') + 1), name, pwd, isSSL);
+                        folders =
+                                MailOperate.getFolders(name.substring(name.indexOf('@') + 1), name,
+                                        pwd, isSSL);
                     }
                     StringBuilder f = new StringBuilder();
                     for (Folder folder : folders) {
@@ -69,18 +73,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                         f.append(folder.getName()).append("\n");
                     }
-                    Transport transport = MailLogin.smtpConnect(name.substring(name.indexOf('@') + 1), name, pwd, isSSL)
+                    Transport transport = MailLogin
+                            .smtpConnect(name.substring(name.indexOf('@') + 1), name, pwd, isSSL)
                             .getTransport("smtp");
                     if (name.endsWith("gmail.com")) {
-                        transport.connect("smtp.gmail.com",name, "ya29.GlthBJHkfKVKj-5ombZ1o-osWrxOthWaeppGyFrkH40b4mDBgBmHnQ2doiclfBdMM2v8UGAINyZj_q9JiDkwfd6pQjJucoD61gz0Z9QK9jSVKyPpNOBNjFr74cVM");
+                        transport.connect("smtp.gmail.com", name,
+                                "ya29.GlthBJHkfKVKj-5ombZ1o-osWrxOthWaeppGyFrkH40b4mDBgBmHnQ2doiclfBdMM2v8UGAINyZj_q9JiDkwfd6pQjJucoD61gz0Z9QK9jSVKyPpNOBNjFr74cVM");
                     } else {
                         transport.connect();
                     }
                     if (transport.isConnected()) {
                         transport.close();
-//                        SendMailSMTP.sendMultipleEmail("126.com", "xyxgylm@126.com", "123456abc", true);
+                        //                        SendMailSMTP.sendMultipleEmail("126.com", "xyxgylm@126.com", "123456abc", true);
                         //SendMailSMTP.sendTextEmail(name.substring(name.indexOf('@') + 1), name, pwd, isSSL);
-                        AppContext.getContext().setUser(new User(name.substring(name.indexOf('@') + 1), name, pwd));
+                        AppContext
+                                .getContext()
+                                .setUser(
+                                        new User(name.substring(name.indexOf('@') + 1), name, pwd));
                         DetailActivity.start(LoginActivity.this, f.toString());
                     }
                 } catch (Exception e) {
@@ -88,7 +97,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(LoginActivity.this, "login failed", Toast.LENGTH_SHORT).show();
+                            Toast
+                                    .makeText(LoginActivity.this, "login failed",
+                                            Toast.LENGTH_SHORT)
+                                    .show();
                         }
                     });
                 }
@@ -105,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String pwd = pwdEt.getText().toString();
                 if (checkData(name, pwd)) {
                     loginMail(name, pwd);
-//                    loginMail("xyxgylm@126.com", "123456abc");
+                    //                    loginMail("xyxgylm@126.com", "123456abc");
                 } else {
                     Toast.makeText(this, "输入有误", Toast.LENGTH_SHORT).show();
                 }

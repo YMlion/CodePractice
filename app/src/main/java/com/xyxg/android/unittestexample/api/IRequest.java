@@ -16,6 +16,7 @@ public interface IRequest {
 
     @POST("books/upload")
     Observable<String> upload(@Body MultipartBody body);
+
     @POST("books/upload2")
     Observable<String> upload2(@Body MultipartBody body);
 

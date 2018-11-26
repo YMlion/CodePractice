@@ -20,13 +20,17 @@ public class Login {
     }
 
     public void login(String un, String pwd) {
-        if (un == null || un.equals("")) return;
-        if (pwd == null || pwd.equals("")) return;
+        if (un == null || un.equals(""))
+            return;
+        if (pwd == null || pwd.equals(""))
+            return;
 
         pwd = request.check(pwd);
         boolean s = request.login(un, pwd);
         if (s) {
-            Toast.makeText(AppContext.getContext(), "login successfully", Toast.LENGTH_SHORT).show();
+            Toast
+                    .makeText(AppContext.getContext(), "login successfully", Toast.LENGTH_SHORT)
+                    .show();
         } else {
             Toast.makeText(AppContext.getContext(), "login failure", Toast.LENGTH_SHORT).show();
         }
