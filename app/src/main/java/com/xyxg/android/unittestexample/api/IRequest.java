@@ -6,6 +6,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
@@ -23,5 +24,10 @@ public interface IRequest {
 
     @Streaming
     @GET("books/download")
+    @Headers("Cache-Control: max-age=120")
     Observable<Response<ResponseBody>> download(@Query("fileName") String fileName);
+
+    @GET("books")
+    @Headers("Cache-Control: max-age=3600")
+    Observable<Response<ResponseBody>> getBooks();
 }

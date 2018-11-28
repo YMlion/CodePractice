@@ -1,11 +1,13 @@
 package com.xyxg.android.unittestexample.api;
 
+import com.xyxg.android.unittestexample.AppContext;
 import com.xyxg.android.unittestexample.util.FileUtil;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -24,12 +26,15 @@ public class DownloadTask {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(60, TimeUnit.SECONDS)
                     .addInterceptor(interceptor)
                     .addNetworkInterceptor(new NetInterceptor()
                             .addHeader("authentication", "authentication")
                             .setListener(listener))
+                    .addNetworkInterceptor(new NetCacheInterceptor())
+                    .cache(new Cache(AppContext.getContext().getExternalCacheDir(),
+                            1024 * 1024 * 100))
                     .build();
             request = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -52,5 +57,9 @@ public class DownloadTask {
                 .download(fileName)
                 .map(response -> FileUtil.saveFile(response.body().byteStream(),
                         path + File.separator + fileName));
+    }
+
+    public Observable<String> getBooks() {
+        return request.getBooks().map(response -> response.body().string());
     }
 }
