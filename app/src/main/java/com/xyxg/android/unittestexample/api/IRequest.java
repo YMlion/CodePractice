@@ -28,6 +28,6 @@ public interface IRequest {
     Observable<Response<ResponseBody>> download(@Query("fileName") String fileName);
 
     @GET("books")
-    @Headers("Cache-Control: max-age=3600")
+    // @Headers("Cache-Control: max-age=3600")
     Observable<Response<ResponseBody>> getBooks();
 }

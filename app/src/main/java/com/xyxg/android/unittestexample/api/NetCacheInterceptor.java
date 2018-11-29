@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -18,14 +17,22 @@ public class NetCacheInterceptor implements Interceptor {
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
-        CacheControl cacheControl = request.cacheControl();
-        Log.d("TAG", "intercept: " + request.cacheControl().toString());
+        String cacheControl = request.cacheControl().toString();
+        Log.d("TAG", "intercept: " + cacheControl);
         Response response = chain.proceed(request);
         Log.d("TAG", "intercept: " + response.cacheControl().toString());
-        if (!cacheControl.toString().isEmpty()) {
+        if (cacheControl.isEmpty()) {
+            if (!response.cacheControl().noStore() && (response.cacheControl().noCache()
+                    || response.cacheControl().maxAgeSeconds() <= 0)) {
+                response = response
+                        .newBuilder()
+                        .header("Cache-Control", cacheControl + ", no-store")
+                        .build();
+            }
+        } else {
             response = response
                     .newBuilder()
-                    .header("Cache-Control", cacheControl.toString())
+                    .header("Cache-Control", cacheControl)
                     .removeHeader("Pragma")
                     .build();
         }
