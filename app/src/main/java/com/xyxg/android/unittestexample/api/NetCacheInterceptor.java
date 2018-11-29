@@ -25,14 +25,12 @@ public class NetCacheInterceptor implements Interceptor {
             if (!response.cacheControl().noStore() && (response.cacheControl().noCache()
                     || response.cacheControl().maxAgeSeconds() <= 0)) {
                 response = response
-                        .newBuilder()
-                        .header("Cache-Control", cacheControl + ", no-store")
+                        .newBuilder().addHeader("Cache-Control", "no-store")
                         .build();
             }
         } else {
             response = response
-                    .newBuilder()
-                    .header("Cache-Control", cacheControl)
+                    .newBuilder().addHeader("Cache-Control", cacheControl)
                     .removeHeader("Pragma")
                     .build();
         }
