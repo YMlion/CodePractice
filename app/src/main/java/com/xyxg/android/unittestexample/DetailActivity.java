@@ -267,38 +267,46 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
-    private void addMessageListener(final Store store, IMAPFolder folder) {
-        folder.addMessageCountListener(new MessageCountAdapter() {
-            @Override
-            public void messagesAdded(MessageCountEvent e) {
-                super.messagesAdded(e);
-                Message[] messages = e.getMessages();
-                try {
-                    Log.e(TAG, "messagesAdded: " + MailInfo.getSubject((MimeMessage) messages[0]));
-                    Folder f = (Folder) e.getSource();
-                    if (f.isOpen()) {
-                        f.close();
+    private void addMessageListener(final Store store, IMAPFolder folder)
+            throws MessagingException {
+        if (store.isConnected() && store instanceof IMAPStore) {
+            if (((IMAPStore) store).hasCapability("IDLE")) {
+                folder.addMessageCountListener(new MessageCountAdapter() {
+                    @Override
+                    public void messagesAdded(MessageCountEvent e) {
+                        super.messagesAdded(e);
+                        Message[] messages = e.getMessages();
+                        try {
+                            Log.e(TAG, "messagesAdded: " + MailInfo.getSubject(
+                                    (MimeMessage) messages[0]));
+                            Folder f = (Folder) e.getSource();
+                            if (f.isOpen()) {
+                                f.close();
+                            }
+                            SystemClock.sleep(1000);
+                            IMAPFolder newF = (IMAPFolder) store.getFolder("INBOX");
+                            addMessageListener(store, newF);
+                            if (!newF.isOpen()) {
+                                newF.open(Folder.READ_ONLY);
+                            }
+                            newF.idle();
+                        } catch (MessagingException e1) {
+                            e1.printStackTrace();
+                        } catch (UnsupportedEncodingException e1) {
+                            e1.printStackTrace();
+                        }
                     }
-                    SystemClock.sleep(1000);
-                    IMAPFolder newF = (IMAPFolder) store.getFolder("INBOX");
-                    addMessageListener(store, newF);
-                    if (!newF.isOpen()) {
-                        newF.open(Folder.READ_ONLY);
-                    }
-                    newF.idle();
-                } catch (MessagingException e1) {
-                    e1.printStackTrace();
-                } catch (UnsupportedEncodingException e1) {
-                    e1.printStackTrace();
-                }
-            }
 
-            @Override
-            public void messagesRemoved(MessageCountEvent e) {
-                super.messagesRemoved(e);
-                Message[] messages = e.getMessages();
-                Log.e(TAG, "messagesAdded: " + messages.length);
+                    @Override
+                    public void messagesRemoved(MessageCountEvent e) {
+                        super.messagesRemoved(e);
+                        Message[] messages = e.getMessages();
+                        Log.e(TAG, "messagesAdded: " + messages.length);
+                    }
+                });
+            } else {
+                // TODO 后台服务间隔获取邮件
             }
-        });
+        }
     }
 }
