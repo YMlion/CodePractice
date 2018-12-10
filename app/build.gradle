@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'mtj-circle-plugin'
+
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -29,14 +31,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    // butterknife
-
-
     androidTestImplementation 'org.mockito:mockito-core:2.22.0'
     androidTestImplementation "com.crittercism.dexmaker:dexmaker:1.4"
     androidTestImplementation "com.crittercism.dexmaker:dexmaker-dx:1.4"
     androidTestImplementation "com.crittercism.dexmaker:dexmaker-mockito:1.4"
-
 
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:customtabs:26.1.0'
@@ -60,29 +58,13 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
-
-//    implementation 'com.sun.mail:android-mail:1.6.0'
-//    implementation 'com.sun.mail:android-activation:1.6.0'
 }
 
-/*afterEvaluate {
-    android.applicationVariants.each { variant ->
-        def dx = tasks.findByName("transformClassesWithDexFor${variant.name.capitalize()}")
-        def hello = "hello${variant.name.capitalize()}"
-        task(hello) << {
-            println "hello"
-        }
-        tasks.findByName(hello).dependsOn dx.taskDependencies.getDependencies(dx)
-        dx.dependsOn tasks.findByName(hello)
-    }
-}*/
-
-/*
-afterEvaluate {
-    android.applicationVariants.each { variant ->
-        def dx = tasks.findByName("transformClassesWithDexFor${variant.name.capitalize()}")
-        def hello = rootProject.getTasks().findByName('hello')
-        hello.dependsOn dx.taskDependencies.getDependencies(dx)
-        dx.dependsOn hello
-    }
-}*/
+MtjCirclePluginConfig {
+    // 设置appkey
+    appkey = '49648d6fdd'
+    // 设置debug 开关，如果需要查看日志则打开开关，为避免影响性能建议上线前关闭（设置为false）
+    debug = true
+    // 默认启动此插件，如果开发者不需要可以禁用（设置为false）
+    enabled = true
+}
