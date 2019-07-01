@@ -257,6 +257,48 @@ public class SendMailSMTP {
                 });
     }
 
+    public static void sendEmail(String host, String username, String pwd, boolean isSSL)
+            throws Exception {
+        // 生成邮件
+        Session session = MailLogin.smtpConnect(host, username, pwd, isSSL);
+        MimeMessage msg = new MimeMessage(session);
+        // 设置发件人
+        msg.setFrom(new InternetAddress(username, "nickname"));
+        // 设置主题
+        msg.setSubject("邮件主题");
+        // 设置收件人
+        Address[] addresses = new Address[3];// 需要初始化
+        msg.setRecipients(Message.RecipientType.TO, addresses);
+        // 设置发送日期
+        msg.setSentDate(new Date());
+        // 如果有附件，则需要添加附件
+        MimeMultipart mailContent = new MimeMultipart("mixed");
+        MimeBodyPart attach = new MimeBodyPart();
+        DataSource ds = new FileDataSource("attach path");
+        DataHandler dh = new DataHandler(ds);
+        attach.setFileName("attach name");
+        attach.setDataHandler(dh);
+        mailContent.addBodyPart(attach);
+        // 设置邮件正文
+        MimeBodyPart bodyPart = new MimeBodyPart();
+        bodyPart.setContent("html content", "text/html;charset=utf-8");
+        mailContent.addBodyPart(bodyPart);
+        // 将附件和邮件内容添加进邮件
+        msg.setContent(mailContent);
+        msg.saveChanges();
+        // 传输服务
+        Transport transport = session.getTransport();
+        if (host.equals("gmail.com")) {
+            transport.connect(host, username, pwd);
+        } else {
+            transport.connect();
+        }
+        // 发信
+        transport.sendMessage(msg, msg.getAllRecipients());
+        // 关闭连接
+        transport.close();
+    }
+
     /**
      * 将邮件内容生成eml文件
      *

@@ -30,10 +30,6 @@ import javax.mail.util.ByteArrayDataSource;
 
 import static android.content.ContentValues.TAG;
 
-/**
- * @author duoyi
- * @date 2016/12/9
- */
 
 public class MailInfo {
 
@@ -51,10 +47,11 @@ public class MailInfo {
      */
     public static String getFrom(MimeMessage msg)
             throws MessagingException, UnsupportedEncodingException {
-        String from = "";
+        String from;
         Address[] froms = msg.getFrom();
-        if (froms.length < 1)
+        if (froms.length < 1) {
             throw new MessagingException("没有发件人!");
+        }
 
         InternetAddress address = (InternetAddress) froms[0];
         String person = address.getPersonal();
@@ -80,17 +77,18 @@ public class MailInfo {
      */
     public static String getReceiveAddress(MimeMessage msg, Message.RecipientType type)
             throws MessagingException {
-        StringBuffer receiveAddress = new StringBuffer();
-        Address[] addresss = null;
+        StringBuilder receiveAddress = new StringBuilder();
+        Address[] addresses;
         if (type == null) {
-            addresss = msg.getAllRecipients();
+            addresses = msg.getAllRecipients();
         } else {
-            addresss = msg.getRecipients(type);
+            addresses = msg.getRecipients(type);
         }
 
-        if (addresss == null || addresss.length < 1)
+        if (addresses == null || addresses.length < 1) {
             return "";
-        for (Address address : addresss) {
+        }
+        for (Address address : addresses) {
             InternetAddress internetAddress = (InternetAddress) address;
             receiveAddress
                     .append(internetAddress.getPersonal())
@@ -142,7 +140,12 @@ public class MailInfo {
                 String charset = "UTF-8";
                 if (index > 0) {
                     charset = contentType.substring(index);
-                    charset = charset.substring(charset.indexOf('"') + 1, charset.lastIndexOf('"'));
+                    if (charset.contains("\"")) {
+                        charset = charset.substring(charset.indexOf('"') + 1,
+                                charset.lastIndexOf('"'));
+                    } else {
+                        charset = charset.substring(charset.indexOf('=') + 1);
+                    }
                 }
                 content.append(MimeUtility.decodeText(new String(baos.toByteArray(), charset)));
                 bis.close();
@@ -172,42 +175,27 @@ public class MailInfo {
 
     /**
      * 判断字符串的编码
-     *
-     * @param str
-     * @return
      */
-    public static String getEncoding(String str) {
+    private static String getEncoding(String str) {
         String encode = "GB2312";
         try {
             if (str.equals(new String(str.getBytes(encode), encode))) {
-                String s = encode;
-                return s;
+                return encode;
             }
-        } catch (Exception exception) {
-        }
-        encode = "ISO-8859-1";
-        try {
+            encode = "ISO-8859-1";
             if (str.equals(new String(str.getBytes(encode), encode))) {
-                String s1 = encode;
-                return s1;
+                return encode;
             }
-        } catch (Exception exception1) {
-        }
-        encode = "UTF-8";
-        try {
+            encode = "UTF-8";
             if (str.equals(new String(str.getBytes(encode), encode))) {
-                String s2 = encode;
-                return s2;
+                return encode;
             }
-        } catch (Exception exception2) {
-        }
-        encode = "GBK";
-        try {
+            encode = "GBK";
             if (str.equals(new String(str.getBytes(encode), encode))) {
-                String s3 = encode;
-                return s3;
+                return encode;
             }
-        } catch (Exception exception3) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return "";
     }
@@ -248,7 +236,7 @@ public class MailInfo {
                     flag = isContainAttachment(bodyPart);
                 } else {
                     String contentType = bodyPart.getContentType();
-                    if (contentType.indexOf("application") != -1) {
+                    if (contentType.contains("application")) {
                         String fileName = bodyPart.getFileName();
                         if (fileName == null) {
                             checkLines(bodyPart);
@@ -257,7 +245,7 @@ public class MailInfo {
                         flag = true;
                     }
 
-                    if (contentType.indexOf("name") != -1) {
+                    if (contentType.contains("name")) {
                         String fileName = bodyPart.getFileName();
                         Log.e(TAG, "Mail parse 3: " + fileName + "; " + getEncoding(fileName));
                         flag = true;
@@ -303,11 +291,9 @@ public class MailInfo {
             String temp = after.replaceAll("\\p{P}", "");
             char[] ch = temp.trim().toCharArray();
 
-            int length = (ch != null) ? ch.length : 0;
-            for (int i = 0; i < length; i++) {
-                char c = ch[i];
+            for (char c : ch) {
                 if (!Character.isLetterOrDigit(c)) {
-                    String str = "" + ch[i];
+                    String str = "" + c;
                     if (!str.matches("[\u4e00-\u9fa5]+")) {
                         return true;
                     }

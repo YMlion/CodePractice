@@ -24,7 +24,7 @@ public interface IRequest {
 
     @Streaming
     @GET("books/download")
-    @Headers("Cache-Control: max-age=120")
+        // @Headers("Cache-Control: max-age=120")
     Observable<Response<ResponseBody>> download(@Query("fileName") String fileName);
 
     @GET("books")

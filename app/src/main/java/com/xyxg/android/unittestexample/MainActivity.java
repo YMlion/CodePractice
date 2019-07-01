@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.baidu.mobstat.StatService;
 import com.xyxg.android.unittestexample.mail.MailInfo;
 import com.xyxg.android.unittestexample.mail.MailLogin;
 import com.xyxg.android.unittestexample.mail.MailOperate;
@@ -27,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Folder;
@@ -148,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void mail163(View view) {
         loginMailbox(mailboxes[1]);
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("type", "163");
+        StatService.onEvent(this, "1", "163..", 1, attributes);
     }
 
     private void loginMailbox(String[] mailbox) {
@@ -196,6 +202,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void mail126(View view) {
         loginMailbox(mailboxes[2]);
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("type", "126");
+        StatService.onEvent(this, "1", "126..", 1, attributes);
     }
 
     public void others(View view) {

@@ -1,6 +1,7 @@
 package com.xyxg.android.unittestexample;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -13,12 +14,19 @@ import com.sun.mail.imap.IMAPFolder;
 import com.xyxg.android.unittestexample.mail.MailLogin;
 import com.xyxg.android.unittestexample.mail.MailOperate;
 import com.xyxg.android.unittestexample.mail.User;
+import com.xyxg.android.unittestexample.util.SubscriberWrap;
+
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscription;
 
 import javax.mail.Folder;
 import javax.mail.Transport;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Flowable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -43,6 +51,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         loginBtn.setOnClickListener(this);
         login = new Login();
+        test();
+    }
+
+    class B {
+        B(int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        int a;
+        int b;
+    }
+
+    private void test() {
+        final long st = System.currentTimeMillis();
+        Flowable
+                .zip(Flowable.fromArray(1, 2, 3), Flowable.fromArray(4, 5, 6), B::new)
+                .flatMap((Function<B, Publisher<String>>) b -> Flowable.just(b).map(b1 -> {
+                    SystemClock.sleep(1000);
+                    return b1.a + b1.b + "";
+                }).subscribeOn(Schedulers.newThread()))
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(new SubscriberWrap<String>() {
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        super.onSubscribe(s);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        super.onNext(s);
+                        Log.d(TAG, "onNext: " + s + " ; " + (System.currentTimeMillis() - st));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        super.onComplete();
+                        Log.d(TAG, "onComplete: " + (System.currentTimeMillis() - st));
+                    }
+                });
     }
 
     private void loginMail(final String name, final String pwd) {

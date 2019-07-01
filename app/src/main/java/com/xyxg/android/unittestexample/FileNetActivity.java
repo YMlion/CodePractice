@@ -97,21 +97,22 @@ public class FileNetActivity extends AppCompatActivity {
     public void download(View view) {
         DownloadTask
                 .build((NetInterceptor.DownloadProgressListener) (total, writtenByte, progress) -> {
-                    if (((int) progress) % 100 == 0) {
+                    /*if (((int) progress) % 100 == 0) {
                         Log.d(TAG, "onProgress: " + total + " : " + writtenByte + " : " + progress);
-                    }
-                })
-                .download("thz.mp3", getExternalCacheDir().getAbsolutePath())
+                    }*/
+                }).download("001.mp4", getExternalCacheDir().getAbsolutePath())
                 .compose(RxUtil.applySchedulerO())
                 .subscribe(new Observer<File>() {
+                    long s = 0;
+
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        s = System.currentTimeMillis();
                     }
 
                     @Override
                     public void onNext(File file) {
-                        Log.d(TAG, "onNext: " + file.getAbsolutePath());
+                        Log.d(TAG, "onNext: " + (System.currentTimeMillis() - s));
                     }
 
                     @Override
@@ -125,7 +126,7 @@ public class FileNetActivity extends AppCompatActivity {
                     }
                 });
 
-        DownloadTask
+        /*DownloadTask
                 .build(null)
                 .getBooks()
                 .compose(RxUtil.applySchedulerO())
@@ -149,6 +150,6 @@ public class FileNetActivity extends AppCompatActivity {
                     public void onComplete() {
 
                     }
-                });
+                });*/
     }
 }
