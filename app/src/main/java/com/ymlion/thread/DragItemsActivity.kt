@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -27,6 +26,9 @@ class DragItemsActivity : AppCompatActivity() {
     private fun init() {
         val manager = GridLayoutManager(this, 4)
         rv.layoutManager = manager
+        rv.addItemDecoration(DividerItemDecoration(this, R.drawable.shape_divider,
+                DividerItemDecoration
+                        .VERTICAL_LIST))
         var entries = ArrayList<Entry>()
         var e = Entry(-1, 0, "我的频道")
         entries.add(e)
@@ -48,7 +50,6 @@ class DragItemsActivity : AppCompatActivity() {
         entries.add(e)
         adapter = RvAdapter(entries)
         rv.adapter = adapter
-        rv.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper
                 .LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
 
@@ -58,10 +59,19 @@ class DragItemsActivity : AppCompatActivity() {
                 val paint = Paint()
                 if (isCurrentlyActive) {
                     paint.color = Color.BLUE
-                } else paint.color = Color.TRANSPARENT
-                c?.drawRect(viewHolder?.itemView?.left!!.toFloat(), viewHolder.itemView?.top!!
-                        .toFloat(), viewHolder.itemView?.right!!.toFloat(),
-                        viewHolder.itemView?.bottom!!.toFloat(), paint)
+                    c?.drawRect(viewHolder?.itemView?.left!!.toFloat(), viewHolder.itemView?.top!!
+                            .toFloat(), viewHolder.itemView?.right!!.toFloat(),
+                            viewHolder.itemView?.bottom!!.toFloat(), paint)
+                    paint.color = Color.BLACK
+                    val left = viewHolder?.itemView?.left!!.toFloat() - 20 + dX
+                    val top = viewHolder
+                            .itemView?.top!!
+                            .toFloat() - 20 + dY
+                    c?.drawRect(left, top, viewHolder.itemView?.width!!.toFloat() + 20 + left,
+                            viewHolder.itemView?.height!!.toFloat() + 20 + top, paint)
+                } else {
+                    paint.color = Color.TRANSPARENT
+                }
             }
 
             override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
@@ -90,7 +100,9 @@ class DragItemsActivity : AppCompatActivity() {
 
             override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
                 super.onSelectedChanged(viewHolder, actionState)
-                viewHolder?.itemView?.setBackgroundColor(Color.BLACK)
+                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                    viewHolder?.itemView?.setBackgroundColor(Color.BLACK)
+                }
             }
 
             override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?) {
@@ -99,10 +111,16 @@ class DragItemsActivity : AppCompatActivity() {
             }
 
             override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
-                val b = (viewHolder is RvAdapter.ViewHolder1) and (target is RvAdapter.ViewHolder1)
+                var i = 2
+                adapter?.list?.forEachIndexed { index, entry ->
+                    if (entry.id == -1 && index > 0)
+                        i = index
+                }
+                val b = viewHolder!!.adapterPosition < i && target!!.adapterPosition < i && viewHolder.adapterPosition > 0 &&
+                        target.adapterPosition > 0
                 Log.d("TAG", "this is $b")
                 if (b)
-                    adapter?.notifyItemMoved(viewHolder!!.adapterPosition, target!!.adapterPosition)
+                    adapter?.notifyItemMoved(viewHolder.adapterPosition, target!!.adapterPosition)
                 return b
             }
 
